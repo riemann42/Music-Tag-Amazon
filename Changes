@@ -1,0 +1,52 @@
+Release Name: 0.30
+===========================
+* Added amazon_info option and several new set values
+* Set upc and ean and will search by these
+* Example code
+
+Release Name: 0.29
+===========================
+* Added option to set several internal objects, such as the cache objects.
+* Fixed bug in lwp method which would cause it to create a new object every call!
+* Kwalitee improvments
+
+Release Name: 0.28
+===========================
+* Split off from Music::Tag distribution
+
+Release Name: 0.27
+============================
+* More documentation and tested POD. 
+* datamethods method now can be used to add new datamethods
+* Added test for MusicBrainz and Amazon plugins
+* Revised releasedate and recorddate internal storage to store as releasetime
+  and recordtime -- with full timestamps.
+* Added releasetime, recordtime, releaseepoch, and recordepoech datamethods.
+* Support for TIME ID3v2 tag.
+* After much thought, replaced Ogg::Vorbis::Header with 
+  Ogg::Vorbis::Header::PurePerl and added vorbiscomment to write tags.
+* Revised OGG and FLAC plugins to clean up code (much slicker now).
+
+Release Name: 0.26
+============================
+* Removed several prerequistes that weren't used
+* Fixed error in README about prerequisite
+
+Release Name: 0.25
+============================
+* Support many more tags for flac, ogg, and m4a
+* Removed autotag safetag quicktag musictag musicsort musicinfo scripts.
+  All is done by musictag now.
+* Added tests for some plugins.  More to do!
+* Bug Fixes
+* Documentation improvments
+* Added preset option for musictag 
+
+Release Name: 0.24
+============================
+* Bug Fixes
+* Revised MP3 Tags to read Picard tags
+
+Release Name: 0.23
+============================
+* Initial Public Release
