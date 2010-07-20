@@ -1,5 +1,5 @@
 package Music::Tag::Amazon;
-our $VERSION = 0.30;
+our $VERSION = 0.31;
 
 # Copyright (c) 2007 Edward Allen III. Some rights reserved.
 #
@@ -10,9 +10,13 @@ our $VERSION = 0.30;
 
 =pod
 
+=for changes stop
+
 =head1 NAME
 
 Music::Tag::Amazon - Plugin module for Music::Tag to get information from Amazon.com
+
+=for readme stop
 
 =head1 SYNOPSIS
 
@@ -25,105 +29,141 @@ Music::Tag::Amazon - Plugin module for Music::Tag to get information from Amazon
 
 	print "Record Label is ", $info->label();
 
+=for readme continue
+
 =head1 DESCRIPTION
 
-Music::Tag::Amazon is normally created in Music::Tag. This plugin gathers additional information about a track from amazon, and updates the tag object.
+This plugin gathers additional information about a track from amazon, and updates the Music::Tag object.
 
-=head1 REQUIRED VALUES
+Music::Tag::Amazon must be created by Music::Tag.
+
+=begin readme
+
+=head1 INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+=head1 DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+   Music::Tag
+   Cache::FileCache
+   Encode
+   LWP
+   Net::Amazon
+
+I strongly recommend the following to allow proximity matches:
+
+   Lingua::EN::Inflect
+   Lingua::Stem
+   Text::LevenshteinXS
+   Text::Unaccent 
+
+=end readme
+
+=for readme stop
+
+=head1 REQUIRED DATA VALUES
 
 =over 4
 
-=item artist
+=item B<artist>
 
 =back
 
-=head1 USED VALUES
+=head1 USED DATA VALUES
 
 =over 4
 
-=item asin
+=item B<asin>
 
 If the asin is set, this is used to look up the results instead of the artist name.
 
-=item album
+=item B<album>
 
 This is used to filter results. 
 
-=item releasedate
+=item B<releasedate>
 
 This is used to filter results. 
 
-=item totaltracks
+=item B<totaltracks>
 
 This is used to filter results. 
 
-=item title
+=item B<title>
 
 title is used only if track is not true, or if trust_title option is set.
 
-=item tracknum
+=item B<tracknum>
 
 tracknum is used only if title is not true, or if trust_track option is set.
 
 =back
 
-=head1 SET VALUES
+=head1 SET DATA VALUES
 
 =over 4
 
-=item album
+=item B<album>
 
 Album name is set if necessary.
 
-=item title
+=item B<title>
 
 title is set only if trust_track is true.
 
-=item track
+=item B<track>
 
 track is set only if track is not true or trust_title is true.
 
-=item picture
+=item B<picture>
 
 highres is tried, then medium-res, then low. If low-res is a gif, it gives up.
 
-=item asin
+=item B<asin>
 
 Amazon Store Identification Number
 
-=item label
+=item B<label>
 
 Label of Album
 
-=item releasedate
+=item B<releasedate>
 
 Release Date
 
-=item upc
+=item B<upc>
 
-UPC / Barcode 
+Universal Product Code.
 
-=item ean
+=item B<ean>
 
-EAN. Valid outside of US only.
+European Article Number
 
 =item B<Amazon Optional Values>
 
-These requires amazon_info optiom be true.
+These values are filled out if the amazon_info option is true.
 
 =over 4
 
-=item amazon_salesrank
+=item B<amazon_salesrank>
 
-=item amazon_description
+=item B<amazon_description>
 
-=item amazon_price
+=item B<amazon_price>
 
-=item amazon_listprice
+=item B<amazon_listprice>
 
-=item amazon_usedprice
+=item B<amazon_usedprice>
 
-=item amazon_usedcount
+=item B<amazon_usedcount>
 
 =back
 
@@ -141,8 +181,7 @@ use Data::Dumper;
 our @ISA = qw(Music::Tag::Generic);
 
 sub default_options {
-    {  quiet            => 0,
-       verbose          => 0,
+    {  
        trust_title      => 0,
        trust_track      => 0,
        coveroverwrite   => 0,
@@ -165,57 +204,33 @@ Music::Tag::Amazon accepts the following options:
 
 =over 4
 
-=item  quiet
+=item B<trust_title>
 
-Setting to true turns off status messages.
+Default false. When this is true, and a Music::Tag object's track number is different than the track number of the song with the same title in the Amazon listing, then the tagobject's tracknumber is updated. In other words, we trust that the song has accurate titles, but the tracknumbers may not be accurate.  If this is true and trust_track is true, then trust_track is ignored.
 
-=item verbose
+=item B<trust_track>
 
-Setting to true increases verbosity.
+Default false. When this is true, and a Music::Tag objects's title conflicts with the title of the corresponding track number on the Amazon listing, then the Music::Tag object's title is set to that of the track number on amazon.  In other words, we trust that the track numbers are accurate in the Music::Tag object. If trust_title is true, this option is ignored.
 
-=item trust_title
+=item B<coveroverwrite>
 
-When this is true, and a tag object's track number is different than the track number of the song with the same title in the Amazon listing, then the tagobject's tracknumber is updated. In other words, we trust that the song has accurate titles, but the tracknumbers may not be accurate.  If this is true and trust_track is true, then trust_track is ignored.
+Default false. When this is true, a new cover is downloaded and the current cover is replaced.  The current cover is only replaced if a new cover is found.
 
-=item trust_track
-
-When this is true, and a tag objects's title conflicts with the title of the corresponding track number on the Amazon listing, then the tag object's title is set to that of the track number on amazon.  In other words, we trust that the track numbers are accurate in the tag object. If trust_title is true, this option is ignored.
-
-=item coveroverwrite
-
-When this is true, a new cover is downloaded and the current cover is replaced.  The current cover is only replaced if a new cover is found.
-
-=item token
+=item B<token>
 
 Amazon Developer token. Change to one given to you by Amazon.
 
-=item amazon_ua
+=item B<min_album_points>
 
-A Net::Amazon object. Used if you want to define your own options for Net::Amazon. 
+Default 10. Minimum number of points an album must have to win election. 
 
-=item lwp_ua
+=item B<locale>
 
-A LWP::UserAgent object. Used if you want to define your own options.
+Default us. Locale code for store to use. Valid are ca, de, fr, jp, uk or us as of now.  Maybe more...
 
-=item amazon_cache
+=item B<amazon_info>
 
-A cache object. Used by default Net::Amazon object to store results. A Cache::FileCache object by default.
-
-=item coverart_cache
-
-A cache object. Used to store coverart in. A Cache::FileCache object by default.
-
-=item min_album_points
-
-Minimum number of points an album must have to win election. Default 10.
-
-=item locale
-
-Locale code for store to use. Valid are ca, de, fr, jp, uk or us as of now.  Maybe more...
-
-=item amazon_info
-
-Return optional info.
+Default false. Return optional info.
 
 =back
 
@@ -223,9 +238,9 @@ Return optional info.
 
 =over 4
 
-=item get_tag
+=item B<get_tag>
 
-Updates current tag object with information from Amazon database.
+Updates current Music::Tag object with information from Amazon database.
 
 =cut
 
@@ -235,15 +250,15 @@ sub get_tag {
     my $filename = $self->info->filename;
 
     unless ( $self->info->artist ) {
-        $self->status("Amazon lookup requires ARTIST already set!");
+        $self->status(0, "Amazon lookup requires ARTIST already set!");
     }
 
     my $p = $self->_album_lookup( $self->info, $self->options );
     unless ( ( defined $p ) && ( $p->{album} ) ) {
-        $self->status("Amazon lookup failed");
+        $self->status(0, "Amazon lookup failed");
         return $self->info;
     }
-    $self->status("Amazon lookup successfull");
+    $self->status(1, "Amazon lookup successfull");
 
     my $totaldiscs = 0;
     my $discs      = $self->_tracks_by_discs($p);
@@ -330,19 +345,19 @@ sub get_tag {
 	}
     if (    ( $p->ImageUrlLarge )
          && ( ( not $self->info->picture ) || ( $self->options('coveroverwrite') ) ) ) {
-        $self->status( "DOWNLOADING LARGE COVER ART ", $p->ImageUrlLarge );
+        $self->status(0, "DOWNLOADING LARGE COVER ART ", $p->ImageUrlLarge );
         $self->info->picture( $self->_cover_art( $p->ImageUrlLarge ) );
     }
 
     if (    ( $p->ImageUrlMedium )
          && ( ( not $self->info->picture ) ) ) {
-        $self->status( "DOWNLOADING MEDIUM COVER ART ", $p->ImageUrlMedium );
+        $self->status(0, "DOWNLOADING MEDIUM COVER ART ", $p->ImageUrlMedium );
         $self->info->picture( $self->_cover_art( $p->ImageUrlMedium ) );
     }
     return $self;
 }
 
-=item lwp
+=item B<lwp>
 
 Returns and optionally sets reference to underlying LWP user agent.
 
@@ -366,7 +381,7 @@ sub lwp {
     return $self->{lwp_ua};
 }
 
-=item amazon_cache
+=item B<amazon_cache>
 
 Returns and optionally sets a reference to the Cache::FileCache object used to cache amazon requests.
 
@@ -394,7 +409,7 @@ sub amazon_cache {
     return $self->{amazon_cache};
 }
 
-=item amazon_cache
+=item B<coverart_cache>
 
 Returns and optionally sets reference to the Cache::FileCache object used to cache downloaded cover art.
 
@@ -423,7 +438,7 @@ sub coverart_cache {
 
 }
 
-=item amazon_ua
+=item B<amazon_ua>
 
 Returns and optionally sets reference to Net::Amazon object.
 
@@ -454,31 +469,31 @@ sub amazon_ua {
 
 =pod
 
-=item default_options
+=item B<default_options>
 
 Returns the default options for the plugin.  
 
-=item set_tag
+=item B<set_tag>
 
 Not used by this plugin.
 
 =back
 
-=head1 METHEDOLOGY
+=head1 METHODOLOGY
 
-If the asin value is true in the tag object, then the lookup is done with this value. Otherwise, it performs a search for all albums by artist, and then waits each album to see which is the most likely. It assigns point using the following values:
+If the asin value is true in the Music::Tag object, then the lookup is done with this value. Otherwise, it performs a search for all albums by artist, and then waits each album to see which is the most likely. It assigns point using the following values:
 
-  Matches ASIN:            128 pts
-  Matches UPC or EAN:      64 pts
-  Full name match:         32 pts
-   or close name match:    20 pts
-  Contains name of track:  10 pts
-   or title match:         8 pts 
-  Matches totaltracks:     4 pts
-  Matches year:            2 pts
-  Older than last match:   1 pts
+  Matches ASIN:            128 points
+  Matches UPC or EAN:      64 points
+  Full name match:         32 points
+   or close name match:    20 points
+  Contains name of track:  10 points
+   or title match:         8 points 
+  Matches totaltracks:     4 points
+  Matches year:            2 points
+  Older than last match:   1 points
 
-Highest album wins. A minimum of 10 pts needed to win the election by default (set by min_album_points option).
+Highest album wins. A minimum of 10 points needed to win the election by default (set by min_album_points option).
 
 Close name match means that both names are the same, after you get rid of white space, articles (the, a, an), lower case everything, translate roman numerals to decimal, etc.
 
@@ -494,15 +509,15 @@ sub _album_lookup {
 	$self->info->datamethods("ean");
 
     if ( ( $self->info->asin ) && ( not $self->options->{ignore_asin} ) ) {
-        $self->status( "Doing ASIN lookup with ASIN: ", $self->info->asin );
+        $self->status(1, "Doing ASIN lookup with ASIN: ", $self->info->asin );
         $req = Net::Amazon::Request::ASIN->new( asin => $self->info->asin );
     }
     elsif ( ( $self->info->upc ) && ( not $self->options->{ignore_upc} ) ) {
-        $self->status( "Doing UPC lookup with UPC: ", $self->info->upc );
+        $self->status(1, "Doing UPC lookup with UPC: ", $self->info->upc );
         $req = Net::Amazon::Request::UPC->new( upc => $self->info->upc, mode => 'music' );
     }
     elsif ( ( $self->info->ean ) && ( not $self->options->{ignore_ean} ) && (not $self->options->{locale} eq 'us' )) {
-        $self->status( "Doing EAN lookup with EAN: ", $self->info->ean );
+        $self->status(1, "Doing EAN lookup with EAN: ", $self->info->ean );
         $req = Net::Amazon::Request::EAN->new( ean => $self->info->ean );
     }
 
@@ -527,7 +542,7 @@ sub _album_lookup {
             $curmatch = $p;
         }
         my $asin = $p->ASIN;
-        $self->status( "Checking out ASIN: ", $asin );
+        $self->status(2, "Checking out ASIN: ", $asin );
         if (    ($asin)
              && ( uc($asin) eq uc( $self->info->asin ) )
              && ( not $self->options->{ignore_asin} ) ) {
@@ -572,13 +587,13 @@ sub _album_lookup {
         }
     }
     if ( $maxscore < $self->options->{min_album_points} ) {
-        $self->status(   "No album scored over "
+        $self->status(0,   "No album scored over "
                        . $self->options->{min_album_points} . " [ "
                        . $n
                        . " canidates ]" );
         return;
     }
-    $self->status(   "Album title "
+    $self->status(0,   "Album title "
                    . $curmatch->{album}
                    . " won with score of $maxscore [ "
                    . $n
@@ -592,14 +607,14 @@ sub _cover_art {
     my $art  = $self->coverart_cache->get($url);
 
     unless ($art) {
-        $self->status("DOWNLOADING URL: $url");
+        $self->status(1, "DOWNLOADING URL: $url");
         my $res = $self->lwp->get($url);
         $art = $res->content;
         $self->coverart_cache->set( $url, $art );
     }
 
     if ( substr( $art, 0, 6 ) eq "GIF89a" ) {
-        $self->status("Current cover is gif, skipping");
+        $self->status(0, "Current cover is gif, skipping");
         return;
     }
 
@@ -689,14 +704,93 @@ Does not do well with artist who have over 50 releases. Amazon sorts by most pop
 
 Multi Disc / Volume sets seem to be working now, but support is still questionable.
 
-=head1 SEE ALSO INCLUDED
-
-L<Music::Tag>, L<Music::Tag::File>, L<Music::Tag::FLAC>, L<Music::Tag::Lyrics>,
-L<Music::Tag::M4A>, L<Music::Tag::MP3>, L<Music::Tag::MusicBrainz>, L<Music::Tag::OGG>, L<Music::Tag::Option>
-
 =head1 SEE ALSO
 
-L<Net::Amazon>
+L<Net::Amazon>, L<Music::Tag> 
+
+=head1 CHANGES
+
+=for changes continue
+
+=over 4
+
+=item Release Name: 0.31
+
+=over 4
+
+=item *
+
+Requires higher verbosity to print all info so it is much quieter when quiet is not set 
+
+=item *
+
+Requires Music::Tag 0.33
+
+=item *
+
+Pod improvements
+
+=item *
+
+Now using Pod::Readme and Test::Spelling
+
+=back
+
+=begin changes
+
+=item Release Name: 0.30
+
+=over 4
+
+=item *
+
+Added amazon_info option and several new set values
+
+=item *
+
+Set upc and ean and will search by these
+
+=item *
+
+Example code
+
+=back
+
+=item Release Name: 0.29
+
+=over 4
+
+=item *
+
+Added option to set several internal objects, such as the cache objects.
+
+=item *
+
+Fixed bug in lwp method which would cause it to create a new object every call!
+
+=item *
+
+Kwalitee improvments
+
+=back
+
+=item Release Name: 0.28
+
+=over 4
+
+=item *
+
+Split off from Music::Tag distribution
+
+=back
+
+=end changes
+
+=back
+
+=for changes stop
+
+=for readme continue
 
 =head1 AUTHOR 
 

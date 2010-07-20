@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Music-Tag-Amazon
-version:             0.3
+version:             0.31
 abstract:            Plugin module for Music::Tag to get information from Amazon.com
 license:             perl
 author:              
@@ -13,7 +13,7 @@ requires:
     Digest::SHA1:                  2.11
     File::Copy:                    0
     LWP:                           5.805
-    Music::Tag:                    0.27
+    Music::Tag:                    0.33
     Net::Amazon:                   0.43
     Test::More:                    0
 meta-spec:
