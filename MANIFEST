@@ -6,4 +6,5 @@ README
 t/1-amazon.t
 t/2-pod.t
 t/3-pod-coverage.t
+eg/azinfo.pl
 META.yml                                 Module meta-data (added by MakeMaker)

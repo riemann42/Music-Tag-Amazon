@@ -131,6 +131,7 @@ These requires amazon_info optiom be true.
 =cut
 
 use strict;
+use warnings;
 use Net::Amazon;
 use Net::Amazon::Request::Artist;
 use Net::Amazon::Request::ASIN;
