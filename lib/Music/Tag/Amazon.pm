@@ -1,7 +1,7 @@
 package Music::Tag::Amazon;
-our $VERSION = 0.32;
+our $VERSION = 0.33;
 
-# Copyright (c) 2007 Edward Allen III. Some rights reserved.
+# Copyright (c) 2009 Edward Allen III. Some rights reserved.
 
 #
 # You may distribute under the terms of either the GNU General Public
@@ -188,7 +188,8 @@ sub default_options {
        trust_title      => 0,
        trust_track      => 0,
        coveroverwrite   => 0,
-       token            => "0V2FQAQSWYH6XMJB8G82",
+       token      =>  "YOURTOKEN",
+	   secret_key => "SECRET",
        min_album_points => 10,
        ignore_asin      => 0,
        max_pages        => 10,
@@ -221,7 +222,11 @@ Default false. When this is true, a new cover is downloaded and the current cove
 
 =item B<token>
 
-Amazon Developer token. Change to one given to you by Amazon.
+Amazon Developer token. Change to one given to you by Amazon. REQUIRED OPTION.
+
+=item B<secret_key>
+
+Amazon Developer secret key. Change to one given to you by Amazon. REQUIRED OPTION.
 
 =item B<min_album_points>
 
@@ -348,14 +353,13 @@ sub get_tag {
 	}
     if (    ( $p->ImageUrlLarge )
          && ( ( not $self->info->picture ) || ( $self->options('coveroverwrite') ) ) ) {
-        $self->status(0, "DOWNLOADING LARGE COVER ART ", $p->ImageUrlLarge );
-        $self->info->picture( $self->_cover_art( $p->ImageUrlLarge ) );
+        $self->_cover_art( $p->ImageUrlLarge ) && $self->tagchange('picture', $p->ImageUrlLarge);
+            
     }
 
     if (    ( $p->ImageUrlMedium )
          && ( ( not $self->info->picture ) ) ) {
-        $self->status(0, "DOWNLOADING MEDIUM COVER ART ", $p->ImageUrlMedium );
-        $self->info->picture( $self->_cover_art( $p->ImageUrlMedium ) );
+        $self->_cover_art( $p->ImageUrlMedium ) && $self->tagchange('picture', $p->ImageUrlMedium);
     }
     return $self;
 }
@@ -459,6 +463,7 @@ sub amazon_ua {
         }
         else {
             $self->{amazon_ua} = Net::Amazon->new( token      => $self->options->{token},
+												   secret_key => $self->options->{secret_key},
                                                    cache      => $self->amazon_cache,
                                                    max_pages  => $self->options->{max_pages},
                                                    locale     => $self->options->{locale},
@@ -609,9 +614,13 @@ sub _cover_art {
     my $url  = shift;
     my $art  = $self->coverart_cache->get($url);
 
-    unless ($art) {
-        $self->status(1, "DOWNLOADING URL: $url");
+    if ($art) {
+        $self->status(0, "USING CACHED URL: $url");
+    }
+    else {
+        $self->status(0, "DOWNLOADING URL: $url");
         my $res = $self->lwp->get($url);
+        return 0 unless $res->is_success;
         $art = $res->content;
         $self->coverart_cache->set( $url, $art );
     }
@@ -625,14 +634,18 @@ sub _cover_art {
     #   $image->Resize(width=>300, height=>300);
     #   $image->BlobToImage($art);
 
-    return {
+    my $picture = {
         "Picture Type" => "Cover (front)",
         "MIME type"    => "image/jpg",
         Description    => "",
 
         #       _Data => $image->ImageToBlob(magick => 'jpg'),
         _Data => $art,
-           }
+           };
+    if ($picture) {
+        $self->info->picture($picture);
+    }
+    return 1;
 
 }
 
@@ -716,6 +729,16 @@ L<Net::Amazon>, L<Music::Tag>
 =for changes continue
 
 =over 4
+
+=item Release Name: 0.33
+
+=over 4
+
+=item *
+
+Added secret_key option required by Amazon now.
+
+=back
 
 =item Release Name: 0.32
 

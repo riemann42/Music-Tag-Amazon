@@ -1,3 +1,9 @@
+    Release Name: 0.33
+        *   Added secret_key option required by Amazon now.
+
+    Release Name: 0.32
+        *   Changed license to allow option of GPL
+
     Release Name: 0.31
         *   Requires higher verbosity to print all info so it is much
             quieter when quiet is not set
