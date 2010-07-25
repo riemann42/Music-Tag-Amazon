@@ -1,5 +1,5 @@
 package Music::Tag::Amazon;
-our $VERSION = 0.33;
+our $VERSION = 0.34;
 
 # Copyright (c) 2009 Edward Allen III. Some rights reserved.
 
@@ -729,6 +729,16 @@ L<Net::Amazon>, L<Music::Tag>
 =for changes continue
 
 =over 4
+
+=item Release Name: 0.34
+
+=over 4
+
+=item *
+
+Added canned responses from Net::Amazon. 
+
+=back
 
 =item Release Name: 0.33
 
