@@ -1,6 +1,7 @@
 package Music::Tag::Amazon;
 use strict;
 use warnings;
+our $VERSION = 0.34;
 
 ## Copyright (c) 2009 Edward Allen III. Some rights reserved.
 
@@ -15,7 +16,6 @@ use Net::Amazon::Request::ASIN;
 use Cache::FileCache;
 use LWP::UserAgent;
 use Data::Dumper;
-our $VERSION = 0.34;
 use base qw(Music::Tag::Generic);
 
 sub default_options {
@@ -706,7 +706,7 @@ L<Net::Amazon>, L<Music::Tag>
 
 Source is available at github: L<http://github.com/riemann42/Music-Tag-Amazon|http://github.com/riemann42/Music-Tag-Amazon>.
 
-=head1 BUGTRACKING
+=head1 BUG TRACKING
 
 Please use github for bug tracking: L<http://github.com/riemann42/Music-Tag-Amazon/issues|http://github.com/riemann42/Music-Tag-Amazon/issues>.
 
