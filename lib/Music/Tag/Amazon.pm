@@ -1,7 +1,7 @@
 package Music::Tag::Amazon;
 use strict;
 use warnings;
-our $VERSION = 0.34;
+our $VERSION = .40_01;
 
 ## Copyright (c) 2009 Edward Allen III. Some rights reserved.
 
