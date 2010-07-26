@@ -1,187 +1,22 @@
 package Music::Tag::Amazon;
-our $VERSION = 0.34;
-
-# Copyright (c) 2009 Edward Allen III. Some rights reserved.
-
-#
-# You may distribute under the terms of either the GNU General Public
-# License or the Artistic License, as specified in the README file.
-#
-
-
-
-
-=pod
-
-=for changes stop
-
-=head1 NAME
-
-Music::Tag::Amazon - Plugin module for Music::Tag to get information from Amazon.com
-
-=for readme stop
-
-=head1 SYNOPSIS
-
-	use Music::Tag
-
-	my $info = Music::Tag->new($filename);
-   
-	my $plugin = $info->add_plugin("Amazon");
-	$plugin->get_tag;
-
-	print "Record Label is ", $info->label();
-
-=for readme continue
-
-=head1 DESCRIPTION
-
-This plugin gathers additional information about a track from amazon, and updates the Music::Tag object.
-
-Music::Tag::Amazon objects must be created by Music::Tag.
-
-=begin readme
-
-=head1 INSTALLATION
-
-To install this module type the following:
-
-   perl Makefile.PL
-   make
-   make test
-   make install
-
-=head1 DEPENDENCIES
-
-This module requires these other modules and libraries:
-
-   Music::Tag
-   Cache::FileCache
-   Encode
-   LWP
-   Net::Amazon
-
-I strongly recommend the following to allow proximity matches:
-
-   Lingua::EN::Inflect
-   Lingua::Stem
-   Text::LevenshteinXS
-   Text::Unaccent 
-
-=end readme
-
-=for readme stop
-
-=head1 REQUIRED DATA VALUES
-
-=over 4
-
-=item B<artist>
-
-=back
-
-=head1 USED DATA VALUES
-
-=over 4
-
-=item B<asin>
-
-If the asin is set, this is used to look up the results instead of the artist name.
-
-=item B<album>
-
-This is used to filter results. 
-
-=item B<releasedate>
-
-This is used to filter results. 
-
-=item B<totaltracks>
-
-This is used to filter results. 
-
-=item B<title>
-
-title is used only if track is not true, or if trust_title option is set.
-
-=item B<tracknum>
-
-tracknum is used only if title is not true, or if trust_track option is set.
-
-=back
-
-=head1 SET DATA VALUES
-
-=over 4
-
-=item B<album>
-
-Album name is set if necessary.
-
-=item B<title>
-
-title is set only if trust_track is true.
-
-=item B<track>
-
-track is set only if track is not true or trust_title is true.
-
-=item B<picture>
-
-highres is tried, then medium-res, then low. If low-res is a gif, it gives up.
-
-=item B<asin>
-
-Amazon Store Identification Number
-
-=item B<label>
-
-Label of Album
-
-=item B<releasedate>
-
-Release Date
-
-=item B<upc>
-
-Universal Product Code.
-
-=item B<ean>
-
-European Article Number
-
-=item B<Amazon Optional Values>
-
-These values are filled out if the amazon_info option is true.
-
-=over 4
-
-=item B<amazon_salesrank>
-
-=item B<amazon_description>
-
-=item B<amazon_price>
-
-=item B<amazon_listprice>
-
-=item B<amazon_usedprice>
-
-=item B<amazon_usedcount>
-
-=back
-
-
-=cut
-
 use strict;
 use warnings;
+
+## Copyright (c) 2009 Edward Allen III. Some rights reserved.
+
+##
+## You may distribute under the terms of either the GNU General Public
+## License or the Artistic License, as specified in the README file.
+##
+
 use Net::Amazon;
 use Net::Amazon::Request::Artist;
 use Net::Amazon::Request::ASIN;
 use Cache::FileCache;
 use LWP::UserAgent;
 use Data::Dumper;
-our @ISA = qw(Music::Tag::Generic);
+our $VERSION = 0.34;
+use base qw(Music::Tag::Generic);
 
 sub default_options {
     {  
@@ -197,60 +32,6 @@ sub default_options {
 	   amazon_info		=> 0,
     };
 }
-
-=pod
-
-=back
-
-=head1 OPTIONS
-
-Music::Tag::Amazon accepts the following options:
-
-=over 4
-
-=item B<trust_title>
-
-Default false. When this is true, and a Music::Tag object's track number is different than the track number of the song with the same title in the Amazon listing, then the tagobject's tracknumber is updated. In other words, we trust that the song has accurate titles, but the tracknumbers may not be accurate.  If this is true and trust_track is true, then trust_track is ignored.
-
-=item B<trust_track>
-
-Default false. When this is true, and a Music::Tag objects's title conflicts with the title of the corresponding track number on the Amazon listing, then the Music::Tag object's title is set to that of the track number on amazon.  In other words, we trust that the track numbers are accurate in the Music::Tag object. If trust_title is true, this option is ignored.
-
-=item B<coveroverwrite>
-
-Default false. When this is true, a new cover is downloaded and the current cover is replaced.  The current cover is only replaced if a new cover is found.
-
-=item B<token>
-
-Amazon Developer token. Change to one given to you by Amazon. REQUIRED OPTION.
-
-=item B<secret_key>
-
-Amazon Developer secret key. Change to one given to you by Amazon. REQUIRED OPTION.
-
-=item B<min_album_points>
-
-Default 10. Minimum number of points an album must have to win election. 
-
-=item B<locale>
-
-Default us. Locale code for store to use. Valid are ca, de, fr, jp, uk or us as of now.  Maybe more...
-
-=item B<amazon_info>
-
-Default false. Return optional info.
-
-=back
-
-=head1 METHODS
-
-=over 4
-
-=item B<get_tag>
-
-Updates current Music::Tag object with information from Amazon database.
-
-=cut
 
 sub get_tag {
     my $self = shift;
@@ -364,12 +145,6 @@ sub get_tag {
     return $self;
 }
 
-=item B<lwp>
-
-Returns and optionally sets reference to underlying LWP user agent.
-
-=cut
-
 sub lwp {
     my $self = shift;
 	my $new = shift;
@@ -387,12 +162,6 @@ sub lwp {
     }
     return $self->{lwp_ua};
 }
-
-=item B<amazon_cache>
-
-Returns and optionally sets a reference to the Cache::FileCache object used to cache amazon requests.
-
-=cut
 
 sub amazon_cache {
     my $self = shift;
@@ -415,12 +184,6 @@ sub amazon_cache {
     }
     return $self->{amazon_cache};
 }
-
-=item B<coverart_cache>
-
-Returns and optionally sets reference to the Cache::FileCache object used to cache downloaded cover art.
-
-=cut
 
 sub coverart_cache {
     my $self = shift;
@@ -445,12 +208,6 @@ sub coverart_cache {
 
 }
 
-=item B<amazon_ua>
-
-Returns and optionally sets reference to Net::Amazon object.
-
-=cut
-
 sub amazon_ua {
     my $self = shift;
 	my $new = shift;
@@ -474,38 +231,6 @@ sub amazon_ua {
     }
     return $self->{amazon_ua};
 }
-
-=pod
-
-=item B<default_options>
-
-Returns the default options for the plugin.  
-
-=item B<set_tag>
-
-Not used by this plugin.
-
-=back
-
-=head1 METHODOLOGY
-
-If the asin value is true in the Music::Tag object, then the lookup is done with this value. Otherwise, it performs a search for all albums by artist, and then waits each album to see which is the most likely. It assigns point using the following values:
-
-  Matches ASIN:            128 points
-  Matches UPC or EAN:      64 points
-  Full name match:         32 points
-   or close name match:    20 points
-  Contains name of track:  10 points
-   or title match:         8 points 
-  Matches totaltracks:     4 points
-  Matches year:            2 points
-  Older than last match:   1 points
-
-Highest album wins. A minimum of 10 points needed to win the election by default (set by min_album_points option).
-
-Close name match means that both names are the same, after you get rid of white space, articles (the, a, an), lower case everything, translate roman numerals to decimal, etc.
-
-=cut
 
 sub _album_lookup {
     my $self = shift;
@@ -712,7 +437,258 @@ sub _tracks_by_name {
 
 1;
 
+__END__
+
 =pod
+
+=head1 NAME
+
+Music::Tag::Amazon - Plugin module for Music::Tag to get information from Amazon.com
+
+=for readme stop
+
+=head1 SYNOPSIS
+
+	use Music::Tag
+
+	my $info = Music::Tag->new($filename);
+   
+	my $plugin = $info->add_plugin("Amazon");
+	$plugin->get_tag;
+
+	print "Record Label is ", $info->label();
+
+=for readme continue
+
+=head1 DESCRIPTION
+
+This plugin gathers additional information about a track from amazon, and updates the Music::Tag object.
+
+Music::Tag::Amazon objects must be created by Music::Tag.
+
+=begin readme
+
+=head1 INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+=head1 DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+   Music::Tag
+   Cache::FileCache
+   Encode
+   LWP
+   Net::Amazon
+
+I strongly recommend the following to allow proximity matches:
+
+   Lingua::EN::Inflect
+   Lingua::Stem
+   Text::LevenshteinXS
+   Text::Unaccent 
+
+=end readme
+
+=for readme stop
+
+=head1 REQUIRED DATA VALUES
+
+=over 4
+
+=item B<artist>
+
+=back
+
+=head1 USED DATA VALUES
+
+=over 4
+
+=item B<asin>
+
+If the asin is set, this is used to look up the results instead of the artist name.
+
+=item B<album>
+
+This is used to filter results. 
+
+=item B<releasedate>
+
+This is used to filter results. 
+
+=item B<totaltracks>
+
+This is used to filter results. 
+
+=item B<title>
+
+title is used only if track is not true, or if trust_title option is set.
+
+=item B<tracknum>
+
+tracknum is used only if title is not true, or if trust_track option is set.
+
+=back
+
+=head1 SET DATA VALUES
+
+=over 4
+
+=item B<album>
+
+Album name is set if necessary.
+
+=item B<title>
+
+title is set only if trust_track is true.
+
+=item B<track>
+
+track is set only if track is not true or trust_title is true.
+
+=item B<picture>
+
+highres is tried, then medium-res, then low. If low-res is a gif, it gives up.
+
+=item B<asin>
+
+Amazon Store Identification Number
+
+=item B<label>
+
+Label of Album
+
+=item B<releasedate>
+
+Release Date
+
+=item B<upc>
+
+Universal Product Code.
+
+=item B<ean>
+
+European Article Number
+
+=item B<Amazon Optional Values>
+
+These values are filled out if the amazon_info option is true.
+
+=over 4
+
+=item B<amazon_salesrank>
+
+=item B<amazon_description>
+
+=item B<amazon_price>
+
+=item B<amazon_listprice>
+
+=item B<amazon_usedprice>
+
+=item B<amazon_usedcount>
+
+=back
+
+=back
+
+=head1 OPTIONS
+
+Music::Tag::Amazon accepts the following options:
+
+=over 4
+
+=item B<trust_title>
+
+Default false. When this is true, and a Music::Tag object's track number is different than the track number of the song with the same title in the Amazon listing, then the tagobject's tracknumber is updated. In other words, we trust that the song has accurate titles, but the tracknumbers may not be accurate.  If this is true and trust_track is true, then trust_track is ignored.
+
+=item B<trust_track>
+
+Default false. When this is true, and a Music::Tag objects's title conflicts with the title of the corresponding track number on the Amazon listing, then the Music::Tag object's title is set to that of the track number on amazon.  In other words, we trust that the track numbers are accurate in the Music::Tag object. If trust_title is true, this option is ignored.
+
+=item B<coveroverwrite>
+
+Default false. When this is true, a new cover is downloaded and the current cover is replaced.  The current cover is only replaced if a new cover is found.
+
+=item B<token>
+
+Amazon Developer token. Change to one given to you by Amazon. REQUIRED OPTION.
+
+=item B<secret_key>
+
+Amazon Developer secret key. Change to one given to you by Amazon. REQUIRED OPTION.
+
+=item B<min_album_points>
+
+Default 10. Minimum number of points an album must have to win election. 
+
+=item B<locale>
+
+Default us. Locale code for store to use. Valid are ca, de, fr, jp, uk or us as of now.  Maybe more...
+
+=item B<amazon_info>
+
+Default false. Return optional info.
+
+=back
+
+=head1 METHODS
+
+=over 4
+
+=item B<get_tag>
+
+Updates current Music::Tag object with information from Amazon database.
+
+=item B<lwp>
+
+Returns and optionally sets reference to underlying LWP user agent.
+
+=item B<amazon_cache>
+
+Returns and optionally sets a reference to the Cache::FileCache object used to cache amazon requests.
+
+=item B<coverart_cache>
+
+Returns and optionally sets reference to the Cache::FileCache object used to cache downloaded cover art.
+
+=item B<amazon_ua>
+
+Returns and optionally sets reference to Net::Amazon object.
+
+=item B<default_options>
+
+Returns the default options for the plugin.  
+
+=item B<set_tag>
+
+Not used by this plugin.
+
+=back
+
+=head1 METHODOLOGY
+
+If the asin value is true in the Music::Tag object, then the lookup is done with this value. Otherwise, it performs a search for all albums by artist, and then waits each album to see which is the most likely. It assigns point using the following values:
+
+  Matches ASIN:            128 points
+  Matches UPC or EAN:      64 points
+  Full name match:         32 points
+   or close name match:    20 points
+  Contains name of track:  10 points
+   or title match:         8 points 
+  Matches totaltracks:     4 points
+  Matches year:            2 points
+  Older than last match:   1 points
+
+Highest album wins. A minimum of 10 points needed to win the election by default (set by min_album_points option).
+
+Close name match means that both names are the same, after you get rid of white space, articles (the, a, an), lower case everything, translate roman numerals to decimal, etc.
 
 =head1 BUGS
 
@@ -724,124 +700,19 @@ Multi Disc / Volume sets seem to be working now, but support is still questionab
 
 L<Net::Amazon>, L<Music::Tag> 
 
-=head1 CHANGES
-
-=for changes continue
-
-=over 4
-
-=item Release Name: 0.34
-
-=over 4
-
-=item *
-
-Added canned responses from Net::Amazon. 
-
-=back
-
-=item Release Name: 0.33
-
-=over 4
-
-=item *
-
-Added secret_key option required by Amazon now.
-
-=back
-
-=item Release Name: 0.32
-
-=over 4
-
-=item *
-
-Changed license to allow option of GPL
-
-=back
-
-=begin changes
-
-=item Release Name: 0.31
-
-=over 4
-
-=item *
-
-Requires higher verbosity to print all info so it is much quieter when quiet is not set 
-
-=item *
-
-Requires Music::Tag 0.33
-
-=item *
-
-Pod improvements
-
-=item *
-
-Now using Pod::Readme and Test::Spelling
-
-=back
-
-
-=item Release Name: 0.30
-
-=over 4
-
-=item *
-
-Added amazon_info option and several new set values
-
-=item *
-
-Set upc and ean and will search by these
-
-=item *
-
-Example code
-
-=back
-
-=item Release Name: 0.29
-
-=over 4
-
-=item *
-
-Added option to set several internal objects, such as the cache objects.
-
-=item *
-
-Fixed bug in lwp method which would cause it to create a new object every call!
-
-=item *
-
-Kwalitee improvments
-
-=back
-
-=item Release Name: 0.28
-
-=over 4
-
-=item *
-
-Split off from Music::Tag distribution
-
-=back
-
-=end changes
-
-=back
-
-=for changes stop
-
 =for readme continue
+
+=head1 SOURCE 
+
+Source is available at github at L<http://github.com/riemann42/Music-Tag-Amazon|http://github.com/riemann42/Music-Tag-Amazon>.
+
+=head1 BUGTRACKING
+
+Please use github for bug tracking at L<http://github.com/riemann42/Music-Tag-Amazon/issues|http://github.com/riemann42/Music-Tag-Amazon/issues>.
 
 =head1 AUTHOR 
 
-Edward Allen III <ealleniii _at_ cpan _dot_ org>
+Edward Allen III <ealleniii _at_ cpan _dot_ org> aka Riemann42
 
 =head1 LICENSE
 
@@ -871,6 +742,5 @@ http://www.gnu.org/copyleft/gpl.html.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2007,2008 Edward Allen III. Some rights reserved.
+Copyright (c) 2007,2008,2010 Edward Allen III. Some rights reserved.
 
-=cut
