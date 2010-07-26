@@ -704,15 +704,15 @@ L<Net::Amazon>, L<Music::Tag>
 
 =head1 SOURCE 
 
-Source is available at github at L<http://github.com/riemann42/Music-Tag-Amazon|http://github.com/riemann42/Music-Tag-Amazon>.
+Source is available at github: L<http://github.com/riemann42/Music-Tag-Amazon|http://github.com/riemann42/Music-Tag-Amazon>.
 
 =head1 BUGTRACKING
 
-Please use github for bug tracking at L<http://github.com/riemann42/Music-Tag-Amazon/issues|http://github.com/riemann42/Music-Tag-Amazon/issues>.
+Please use github for bug tracking: L<http://github.com/riemann42/Music-Tag-Amazon/issues|http://github.com/riemann42/Music-Tag-Amazon/issues>.
 
 =head1 AUTHOR 
 
-Edward Allen III <ealleniii _at_ cpan _dot_ org> aka Riemann42
+Edward Allen III <ealleniii _at_ cpan _dot_ org>
 
 =head1 LICENSE
 
