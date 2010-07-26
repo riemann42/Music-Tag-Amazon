@@ -33,6 +33,16 @@ sub default_options {
     };
 }
 
+sub required_values {
+	return qw(artist);
+}
+
+sub set_values {
+	return qw(  album title track picture asin label releasedate upc ean
+				amazon_salesrank amazon_description amazon_price 
+				amazon_listprice amazon_usedprice amazon_usedcount);
+}
+
 sub get_tag {
     my $self = shift;
 
@@ -642,33 +652,41 @@ Default false. Return optional info.
 
 =over 4
 
-=item B<get_tag>
+=item B<get_tag()>
 
 Updates current Music::Tag object with information from Amazon database.
 
-=item B<lwp>
+=item B<lwp()>
 
 Returns and optionally sets reference to underlying LWP user agent.
 
-=item B<amazon_cache>
+=item B<amazon_cache()>
 
 Returns and optionally sets a reference to the Cache::FileCache object used to cache amazon requests.
 
-=item B<coverart_cache>
+=item B<coverart_cache()>
 
 Returns and optionally sets reference to the Cache::FileCache object used to cache downloaded cover art.
 
-=item B<amazon_ua>
+=item B<amazon_ua()>
 
 Returns and optionally sets reference to Net::Amazon object.
 
-=item B<default_options>
+=item B<default_options()>
 
 Returns the default options for the plugin.  
 
-=item B<set_tag>
+=item B<set_tag()>
 
 Not used by this plugin.
+
+=item B<required_values()>
+
+A list of required values required for get_tag() to work.
+
+=item B<set_values()>
+
+A list of values that can be set by this module.
 
 =back
 
