@@ -1,3 +1,14 @@
+CHANGES
+	Release Name: 0.40_01
+		*	Started using git and github
+
+		*	Normalized version accross plugins.
+
+		*	POD Changes
+
+    Release Name: 0.34
+        *   Added canned responses from Net::Amazon.
+
     Release Name: 0.33
         *   Added secret_key option required by Amazon now.
 
