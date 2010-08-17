@@ -1,14 +1,11 @@
 package Music::Tag::Amazon;
-use strict;
-use warnings;
-our $VERSION = .4101;
+use strict; use warnings; use utf8;
+our $VERSION = '.4101';
 
-## Copyright (c) 2009 Edward Allen III. Some rights reserved.
-
-##
-## You may distribute under the terms of either the GNU General Public
-## License or the Artistic License, as specified in the README file.
-##
+# Copyright © 2009,2010 Edward Allen III. Some rights reserved.
+#
+# You may distribute under the terms of either the GNU General Public
+# License or the Artistic License, as specified in the README file.
 
 use Net::Amazon;
 use Net::Amazon::Request::Artist;
@@ -786,19 +783,17 @@ Does not do well with artist who have over 50 releases. Amazon sorts by most pop
 
 Multi Disc / Volume sets seem to be working now, but support is still questionable.
 
+Please use github for bug tracking: L<http://github.com/riemann42/Music-Tag-Amazon/issues|http://github.com/riemann42/Music-Tag-Amazon/issues>.
+
 =head1 SEE ALSO
 
-L<Net::Amazon>, L<Music::Tag> 
+L<Net::Amazon|Net::Amazon>, L<Music::Tag|Music::Tag> 
 
 =for readme continue
 
 =head1 SOURCE 
 
 Source is available at github: L<http://github.com/riemann42/Music-Tag-Amazon|http://github.com/riemann42/Music-Tag-Amazon>.
-
-=head1 BUG TRACKING
-
-Please use github for bug tracking: L<http://github.com/riemann42/Music-Tag-Amazon/issues|http://github.com/riemann42/Music-Tag-Amazon/issues>.
 
 =head1 AUTHOR 
 
@@ -832,5 +827,5 @@ http://www.gnu.org/copyleft/gpl.html.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2007,2008,2010 Edward Allen III. Some rights reserved.
+Copyright © 2007,2008,2010 Edward Allen III. Some rights reserved.
 
