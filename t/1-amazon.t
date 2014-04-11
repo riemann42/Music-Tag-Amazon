@@ -19,7 +19,8 @@ BEGIN { use_ok('Net::Amazon') }
 
 my $ua = Net::Amazon->new(
     token         => 'YOUR_AMZN_TOKEN',
-    secret_key  => 'YOUR_AMZN_SECRET_KEY',
+    secret_key    => 'YOUR_AMZN_SECRET_KEY',
+    associate_tab => 'YOUR_AMZN_ASSOCIATE_TAG'
     # response_dump => 1,
 );
 
