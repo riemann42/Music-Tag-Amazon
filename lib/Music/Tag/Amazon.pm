@@ -21,6 +21,7 @@ sub default_options {
         coveroverwrite   => 0,
         token            => "YOURTOKEN",
         secret_key       => "SECRET",
+        associate_tag	 => "YOURTAG",
         min_album_points => 10,
         ignore_asin      => 0,
         max_pages        => 10,
@@ -254,13 +255,14 @@ sub amazon_ua {
         }
         else {
             $self->{amazon_ua} = Net::Amazon->new(
-                token      => $self->options->{token},
-                secret_key => $self->options->{secret_key},
-                cache      => $self->amazon_cache,
-                max_pages  => $self->options->{max_pages},
-                locale     => $self->options->{locale},
-                strict     => 1,
-                rate_limit => 1,
+                token      	=> $self->options->{token},
+                secret_key 	=> $self->options->{secret_key},
+                associate_tag	=> $self->options->{associate_tag},
+                cache      	=> $self->amazon_cache,
+                max_pages  	=> $self->options->{max_pages},
+                locale     	=> $self->options->{locale},
+                strict     	=> 1,
+                rate_limit 	=> 1,
             );
         }
     }
@@ -545,6 +547,10 @@ This plugin gathers additional information about a track from amazon, and update
 
 Music::Tag::Amazon objects must be created by Music::Tag.
 
+Music::Tag::Amazon uses L<Net::Amazon> and requires valid Amazon deverloper tokens:
+
+L<http://www.amazon.com/soap>
+
 =begin readme
 
 =head1 INSTALLATION
@@ -702,6 +708,10 @@ Amazon Developer token. Change to one given to you by Amazon. REQUIRED OPTION.
 =item B<secret_key>
 
 Amazon Developer secret key. Change to one given to you by Amazon. REQUIRED OPTION.
+
+=item B<associate_tag>
+
+Amazon Developer associate tag. Change to one given to you by Amazon. REQUIRED OPTION.
 
 =item B<min_album_points>
 

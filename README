@@ -7,6 +7,10 @@ DESCRIPTION
     and updates the Music::Tag object.
 
     Music::Tag::Amazon objects must be created by Music::Tag.
+    
+    Music::Tag::Amazon uses Net::Amazon and requires valid Amazon developer tokens:
+
+    http://www.amazon.com/soap
 
 INSTALLATION
     To install this module type the following:
